@@ -1,0 +1,48 @@
+# protractor:
+#      #image: node
+#      build: ./e2e
+#      container_name: protractor_hyper
+#      volumes:
+#          - "./e2e/:/usr/src"
+#      #ports:
+#      #    - 4444:4444
+#      #    - 4200:4200
+#      working_dir: "/usr/src/"
+#      #command: "/etc/start.sh"
+#      command: "npm start"
+#      #command: "ping google.com"
+#      links:
+#      - apache
+node:
+    #image: node
+    build: ./node
+    container_name: node_loopback
+    #ports:
+    #    - 4444:4444
+    #    - 4200:4200
+    ports:
+        - 3000:3000
+    working_dir: "/usr/src/testorm/"
+    volumes:
+        - ./node:/usr/src/
+    #command: "/etc/start.sh"
+    command: "npm start"
+    links:
+      - mysql
+mysql:
+    #image: mysql:latest
+    build: ./mysql
+    container_name: mysql_loopback
+    restart: always
+    environment:
+        MYSQL_ROOT_PASSWORD: "root"
+        MYSQL_DATABASE: loopback
+        MYSQL_USER: user
+        MYSQL_PASSWORD: password
+        MYSQL_HOST: localhost
+        #MYSQL_PORT: 3306
+    volumes:
+        - dbdataloopback:/var/lib/mysql
+        - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+        - 3306:3306
